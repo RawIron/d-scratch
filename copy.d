@@ -1,4 +1,7 @@
+#!/usr/bin/env rdmd
+
 import std.algorithm, std.concurrency, std.stdio;
+
 
 void main() {
    enum bufferSize = 1024 * 100;

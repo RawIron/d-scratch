@@ -1,3 +1,5 @@
+#!/usr/bin/env rdmd
+
 import std.concurrency, std.stdio;
 
 void main() {

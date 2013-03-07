@@ -1,4 +1,7 @@
+#!/usr/bin/env rdmd
+
 import std.concurrency, std.stdio;
+
 
 void main() {
    auto low = 0, high = 100;
