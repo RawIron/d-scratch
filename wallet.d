@@ -13,6 +13,8 @@ interface ControlEvent {
 interface WalletEvent {
     void execute();
 }
+
+
 class WalletWithdraw : WalletEvent {
     void execute() {
     }
