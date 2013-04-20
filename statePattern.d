@@ -1,5 +1,7 @@
 #!/usr/bin/env rdmd
 
+import std.stdio;
+
 
 class MessageExchangeState {
     MessageExchangeState messagesSent() {
@@ -17,9 +19,14 @@ class MessageExchangeState {
     MessageExchangeState timeout() {
         return new Invalid();
     }
+    void print() {}
 }
 
-class Invalid : MessageExchangeState {}
+class Invalid : MessageExchangeState {
+    void print() {
+        writeln("invalid");
+    }
+}
 
 
 class ReadyToSendStateChange : MessageExchangeState {
@@ -29,62 +36,93 @@ class ReadyToSendStateChange : MessageExchangeState {
     MessageExchangeState timeout() {
         return new Invalid();
     }
+    void print() {
+        writeln("ready");
+    }
 }
 
 class WaitForVotes : MessageExchangeState {
+    private uint voters = 3;
+    private uint votes = 0;
     MessageExchangeState voteReceived() {
-        return new ElectionClosed();
+        ++votes;
+        if (votes < voters) {
+            return this;
+        } else {
+            return new ElectionClosed();
+        }
     }
     MessageExchangeState timeout() {
         return new ElectionClosed();
     }
+    void print() {
+        printf("vote %d\n", votes);
+    }
 }
 
 class ElectionClosed : MessageExchangeState {
-    MessageExchangeState countStateVotes() {
+    MessageExchangeState countReceivedVotes() {
         return new ElectionCompleted();
     }
     MessageExchangeState timeout() {
         return new ReadyToSendStateChange();
     }
+    void print() {
+        writeln("election closed");
+    }
 }
 
 class ElectionCompleted : MessageExchangeState {
-    MessageExchangeState announceResult() {
+    MessageExchangeState countStateVotes() {
         return new ReadyToSendStateChange();
     }
     MessageExchangeState timeout() {
         return new ReadyToSendStateChange();
     }
+    void print() {
+        writeln("election completed");
+    }
 }
 
 
 class Election {
-    private MessageExchangeState cstate;
+    private MessageExchangeState currentState;
     this() {
-        cstate = new ReadyToSendStateChange();
+        currentState = new ReadyToSendStateChange();
+        currentState.print();
     }
 
     void messagesSent() {
-        cstate = cstate.messagesSent();
+        currentState = currentState.messagesSent();
+        currentState.print();
     }
     void voteReceived() {
-        cstate = cstate.voteReceived();
+        currentState = currentState.voteReceived();
+        currentState.print();
     }
     void countReceivedVotes() {
-        cstate = cstate.countReceivedVotes();
+        currentState = currentState.countReceivedVotes();
+        currentState.print();
     }
     void countStateVotes() {
-        cstate = cstate.countStateVotes();
+        currentState = currentState.countStateVotes();
+        currentState.print();
     }
     void timeout() {
-        cstate = cstate.timeout();
+        currentState = currentState.timeout();
+        currentState.print();
     }
 }
+
 
 
 void main() {
     Election phase = new Election();
     phase.messagesSent();
+    phase.voteReceived();
+    phase.voteReceived();
+    phase.voteReceived();
+    phase.countReceivedVotes();
+    phase.countStateVotes();
 }
 
