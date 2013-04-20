@@ -4,4 +4,4 @@ statePattern:	statePattern.d
 
 clean:
 	rm -f *.o
-	rm -f statePattern
+	rm -f statePattern basics

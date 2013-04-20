@@ -3,129 +3,175 @@
 import std.stdio;
 
 
-class MessageExchangeState {
+abstract class MessageExchangeState {
+    private Election election;
     MessageExchangeState messageSent() {
-        return new Invalid();
+        return new Invalid(election);
     }
     MessageExchangeState voteReceived() {
-        return new Invalid();
+        return new Invalid(election);
     }
     MessageExchangeState countReceivedVotes() {
-        return new Invalid();
+        return new Invalid(election);
     }
     MessageExchangeState countStateVotes() {
-        return new Invalid();
+        return new Invalid(election);
     }
     MessageExchangeState timeout() {
-        return new Invalid();
+        return new Invalid(election);
     }
-    void print() {}
+    abstract void print();
 }
 
 
 class Invalid : MessageExchangeState {
+    private Election election;
+    this(Election e) {
+        election = e;
+    }
     void print() {
         writeln("invalid");
     }
 }
 
 class MessagesSentFailed : MessageExchangeState {
-    void print() {
+    private Election election;
+    this(Election e) {
+        election = e;
+    }
+    override void print() {
         writeln("sent failed");
     }
 }
 
 class ElectionFailed : MessageExchangeState {
-    void print() {
+    private Election election;
+    this(Election e) {
+        election = e;
+    }
+    override void print() {
         writeln("election failed");
     }
 }
 
 class ElectionLost : MessageExchangeState {
-    void print() {
+    private Election election;
+    this(Election e) {
+        election = e;
+    }
+    override void print() {
         writeln("election lost");
     }
 }
 
 class ElectionWon : MessageExchangeState {
-    void print() {
+    private Election election;
+    this(Election e) {
+        election = e;
+    }
+    override void print() {
         writeln("election won");
     }
 }
 
 
 class ReadyToSendStateChange : MessageExchangeState {
-    private uint voters = 3;
+    private Election election;
+    this(Election e) {
+        election = e;
+    }
     private uint delivered = 3;
-    MessageExchangeState messageSent() {
+    override MessageExchangeState messageSent() {
         ++ delivered;
-        if (delivered < voters) {
+        if (delivered < election.voters()) {
             return this;
         } else {
-            return new WaitForVotes();
+            return new WaitForVotes(election);
         }
     }
-    MessageExchangeState timeout() {
-        return new MessagesSentFailed();
+    override MessageExchangeState timeout() {
+        return new MessagesSentFailed(election);
     }
-    void print() {
+    override void print() {
         writeln("message sent");
     }
 }
 
 class WaitForVotes : MessageExchangeState {
-    private uint voters = 3;
+    private Election election;
+    this(Election e) {
+        election = e;
+    }
     private uint votes = 0;
-    MessageExchangeState voteReceived() {
+    override MessageExchangeState voteReceived() {
         ++votes;
-        if (votes < voters) {
+        if (votes < election.voters()) {
             return this;
         } else {
-            return new ElectionClosed();
+            return new ElectionClosed(election);
         }
     }
-    MessageExchangeState timeout() {
-        return new ElectionClosed();
+    override MessageExchangeState timeout() {
+        return new ElectionClosed(election);
     }
-    void print() {
+    override void print() {
         printf("vote %d\n", votes);
     }
 }
 
 class ElectionClosed : MessageExchangeState {
+    private Election election;
+    this(Election e) {
+        election = e;
+    }
     private uint received = 3;
-    private uint required = 3;
-    MessageExchangeState countReceivedVotes() {
-        if (received < required) {
-            return new ElectionFailed();
+    override MessageExchangeState countReceivedVotes() {
+        if (received < election.voted()) {
+            return new ElectionFailed(election);
         } else {
-            return new ElectionCompleted();
+            return new ElectionCompleted(election);
         }
     }
-    void print() {
+    override void print() {
         writeln("election closed");
     }
 }
 
 class ElectionCompleted : MessageExchangeState {
-    private uint voted = 3;
-    private uint majority = 3;
-    MessageExchangeState countStateVotes() {
-        if (voted < majority) {
-            return new ElectionLost();
-        }
-        return new ElectionWon();
+    private Election election;
+    this(Election e) {
+        election = e;
     }
-    void print() {
+    private uint voted = 3;
+    override MessageExchangeState countStateVotes() {
+        if (voted < election.majority()) {
+            return new ElectionLost(election);
+        }
+        return new ElectionWon(election);
+    }
+    override void print() {
         writeln("election completed");
     }
 }
 
 
-class Election {
+interface Election {
+    uint voters();
+    uint voted();
+    uint majority();
+}
+
+class TwoPhaseElection : Election {
+    private uint _voters = 3;
+    private uint _voted = 3;
+    private uint _majority = 3;
+    uint voters() { return _voters; }
+    uint voted() { return _voted; }
+    uint majority() { return _majority; }
+
     private MessageExchangeState currentState;
     this() {
-        currentState = new ReadyToSendStateChange();
+        currentState = new ReadyToSendStateChange(this);
         currentState.print();
     }
 
@@ -152,7 +198,7 @@ class Election {
 }
 
 unittest {
-    Election phase = new Election();
+    TwoPhaseElection phase = new TwoPhaseElection();
     phase.messageSent();
     phase.voteReceived();
     phase.voteReceived();
@@ -162,7 +208,7 @@ unittest {
 }
 
 unittest {
-    Election phase = new Election();
+    TwoPhaseElection phase = new TwoPhaseElection();
     phase.messageSent();
     phase.voteReceived();
     phase.voteReceived();
