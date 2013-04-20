@@ -59,29 +59,32 @@ class ElectionCompleted : MessageExchangeState {
 }
 
 
-class Election() {
-    private MessageExchangeState state;
+class Election {
+    private MessageExchangeState cstate;
     this() {
-        state = new ReadyToSendStateChange();
+        cstate = new ReadyToSendStateChange();
     }
 
     void messagesSent() {
-        state = state.messageSent();
+        cstate = cstate.messagesSent();
     }
     void voteReceived() {
-        state = state.voteReceived();
+        cstate = cstate.voteReceived();
     }
     void countReceivedVotes() {
-        state = state.countReceivedVotes();
+        cstate = cstate.countReceivedVotes();
     }
     void countStateVotes() {
-        state = state.countStateVotes();
+        cstate = cstate.countStateVotes();
     }
     void timeout() {
-        state = state.timeout();
+        cstate = cstate.timeout();
     }
 }
 
 
 void main() {
+    Election phase = new Election();
+    phase.messagesSent();
 }
+
