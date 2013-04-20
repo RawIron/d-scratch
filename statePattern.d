@@ -4,7 +4,7 @@ import std.stdio;
 
 
 class MessageExchangeState {
-    MessageExchangeState messagesSent() {
+    MessageExchangeState messageSent() {
         return new Invalid();
     }
     MessageExchangeState voteReceived() {
@@ -22,22 +22,54 @@ class MessageExchangeState {
     void print() {}
 }
 
+
 class Invalid : MessageExchangeState {
     void print() {
         writeln("invalid");
     }
 }
 
+class MessagesSentFailed : MessageExchangeState {
+    void print() {
+        writeln("sent failed");
+    }
+}
+
+class ElectionFailed : MessageExchangeState {
+    void print() {
+        writeln("election failed");
+    }
+}
+
+class ElectionLost : MessageExchangeState {
+    void print() {
+        writeln("election lost");
+    }
+}
+
+class ElectionWon : MessageExchangeState {
+    void print() {
+        writeln("election won");
+    }
+}
+
 
 class ReadyToSendStateChange : MessageExchangeState {
-    MessageExchangeState messagesSent() {
-        return new WaitForVotes();
+    private uint voters = 3;
+    private uint delivered = 3;
+    MessageExchangeState messageSent() {
+        ++ delivered;
+        if (delivered < voters) {
+            return this;
+        } else {
+            return new WaitForVotes();
+        }
     }
     MessageExchangeState timeout() {
-        return new Invalid();
+        return new MessagesSentFailed();
     }
     void print() {
-        writeln("ready");
+        writeln("message sent");
     }
 }
 
@@ -61,11 +93,14 @@ class WaitForVotes : MessageExchangeState {
 }
 
 class ElectionClosed : MessageExchangeState {
+    private uint received = 3;
+    private uint required = 3;
     MessageExchangeState countReceivedVotes() {
-        return new ElectionCompleted();
-    }
-    MessageExchangeState timeout() {
-        return new ReadyToSendStateChange();
+        if (received < required) {
+            return new ElectionFailed();
+        } else {
+            return new ElectionCompleted();
+        }
     }
     void print() {
         writeln("election closed");
@@ -73,11 +108,13 @@ class ElectionClosed : MessageExchangeState {
 }
 
 class ElectionCompleted : MessageExchangeState {
+    private uint voted = 3;
+    private uint majority = 3;
     MessageExchangeState countStateVotes() {
-        return new ReadyToSendStateChange();
-    }
-    MessageExchangeState timeout() {
-        return new ReadyToSendStateChange();
+        if (voted < majority) {
+            return new ElectionLost();
+        }
+        return new ElectionWon();
     }
     void print() {
         writeln("election completed");
@@ -92,8 +129,8 @@ class Election {
         currentState.print();
     }
 
-    void messagesSent() {
-        currentState = currentState.messagesSent();
+    void messageSent() {
+        currentState = currentState.messageSent();
         currentState.print();
     }
     void voteReceived() {
@@ -114,15 +151,26 @@ class Election {
     }
 }
 
-
-
-void main() {
+unittest {
     Election phase = new Election();
-    phase.messagesSent();
+    phase.messageSent();
+    phase.voteReceived();
+    phase.voteReceived();
+    phase.timeout();
+    phase.countReceivedVotes();
+    phase.countStateVotes();
+}
+
+unittest {
+    Election phase = new Election();
+    phase.messageSent();
     phase.voteReceived();
     phase.voteReceived();
     phase.voteReceived();
     phase.countReceivedVotes();
     phase.countStateVotes();
 }
+
+
+void main() {}
 
