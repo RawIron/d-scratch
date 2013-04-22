@@ -29,7 +29,7 @@ class Invalid : MessageExchangeState {
     this(Election e) {
         election = e;
     }
-    void print() {
+    override void print() {
         writeln("invalid");
     }
 }
@@ -80,14 +80,17 @@ class ReadyToSendStateChange : MessageExchangeState {
     this(Election e) {
         election = e;
     }
-    private uint delivered = 3;
-    override MessageExchangeState messageSent() {
-        ++ delivered;
+    private uint delivered = 0;
+    private MessageExchangeState evaluate() {
         if (delivered < election.voters()) {
             return this;
         } else {
             return new WaitForVotes(election);
         }
+    }
+    override MessageExchangeState messageSent() {
+        ++ delivered;
+        return evaluate();
     }
     override MessageExchangeState timeout() {
         return new MessagesSentFailed(election);
@@ -124,10 +127,11 @@ class ElectionClosed : MessageExchangeState {
     this(Election e) {
         election = e;
     }
-    private uint received = 3;
+    private uint received = 0;
     override MessageExchangeState countReceivedVotes() {
+        ++received;
         if (received < election.voted()) {
-            return new ElectionFailed(election);
+            return this;
         } else {
             return new ElectionCompleted(election);
         }
@@ -142,10 +146,11 @@ class ElectionCompleted : MessageExchangeState {
     this(Election e) {
         election = e;
     }
-    private uint voted = 3;
+    private uint voted = 0;
     override MessageExchangeState countStateVotes() {
+        ++voted;
         if (voted < election.majority()) {
-            return new ElectionLost(election);
+            return this;
         }
         return new ElectionWon(election);
     }
@@ -161,7 +166,7 @@ interface Election {
     uint majority();
 }
 
-class TwoPhaseElection : Election {
+class AllOrNothingElection : Election {
     private uint _voters = 3;
     private uint _voted = 3;
     private uint _majority = 3;
@@ -198,21 +203,27 @@ class TwoPhaseElection : Election {
 }
 
 unittest {
-    TwoPhaseElection phase = new TwoPhaseElection();
+    scope phase = new AllOrNothingElection();
+    phase.messageSent();
+    phase.messageSent();
     phase.messageSent();
     phase.voteReceived();
     phase.voteReceived();
-    phase.timeout();
+    phase.voteReceived();
     phase.countReceivedVotes();
+    phase.countReceivedVotes();
+    phase.countReceivedVotes();
+    phase.countStateVotes();
+    phase.countStateVotes();
     phase.countStateVotes();
 }
 
 unittest {
-    TwoPhaseElection phase = new TwoPhaseElection();
+    scope phase = new AllOrNothingElection();
     phase.messageSent();
     phase.voteReceived();
     phase.voteReceived();
-    phase.voteReceived();
+    phase.timeout();
     phase.countReceivedVotes();
     phase.countStateVotes();
 }
