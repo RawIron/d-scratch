@@ -3,22 +3,28 @@ import statePattern;
 
 
 unittest {
-    Election prepareToCommit = new AllOrNothingElection();
-    prepareToCommit.messageSend();
+    uint voters = 5;
+    auto prepareToCommit = new AllOrNothingElection();
+
+    foreach (i; 0..voters) {
+        prepareToCommit.messageSent();
+    }
 
     if (prepareToCommit.won()) {
-        Election commit = new AllOrNothingElection();
-        commit.messageSend();
+        auto commit = new AllOrNothingElection();
+        commit.messageSent();
         if (commit.lost()) {
-            Election brokenCommit = new AllOrNothingElection();
-            brokenCommit.messageSend();
+            auto brokenCommit = new AllOrNothingElection();
+            brokenCommit.messageSent();
         }
     } else if (prepareToCommit.lost()) {
-        Election abort = new AllOrNothingElection();
-        abort.messageSend();
+        auto abort = new AllOrNothingElection();
+        abort.messageSent();
         if (abort.lost()) {
-            Election brokenAbort = new AllOrNothingElection();
-            brokenAbort.messageSend();
+            auto brokenAbort = new AllOrNothingElection();
+            brokenAbort.messageSent();
         }
     }
 }
+
+void main() {}

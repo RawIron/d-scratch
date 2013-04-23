@@ -20,7 +20,7 @@ abstract class MessageExchangeState {
     MessageExchangeState timeout() {
         return new Invalid(election);
     }
-    abstract void print();
+    abstract void print() const;
 }
 
 
@@ -29,7 +29,7 @@ class Invalid : MessageExchangeState {
     this(Election e) {
         election = e;
     }
-    override void print() {
+    override void print() const {
         writeln("invalid");
     }
 }
@@ -39,7 +39,7 @@ class MessagesSentFailed : MessageExchangeState {
     this(Election e) {
         election = e;
     }
-    override void print() {
+    override void print() const {
         writeln("sent failed");
     }
 }
@@ -49,7 +49,7 @@ class ElectionFailed : MessageExchangeState {
     this(Election e) {
         election = e;
     }
-    override void print() {
+    override void print() const {
         writeln("election failed");
     }
 }
@@ -59,7 +59,7 @@ class ElectionLost : MessageExchangeState {
     this(Election e) {
         election = e;
     }
-    override void print() {
+    override void print() const {
         writeln("election lost");
     }
 }
@@ -69,7 +69,7 @@ class ElectionWon : MessageExchangeState {
     this(Election e) {
         election = e;
     }
-    override void print() {
+    override void print() const {
         writeln("election won");
     }
 }
@@ -95,7 +95,7 @@ class ReadyToSendStateChange : MessageExchangeState {
     override MessageExchangeState timeout() {
         return new MessagesSentFailed(election);
     }
-    override void print() {
+    override void print() const {
         writeln("message sent");
     }
 }
@@ -117,7 +117,7 @@ class WaitForVotes : MessageExchangeState {
     override MessageExchangeState timeout() {
         return new ElectionClosed(election);
     }
-    override void print() {
+    override void print() const {
         printf("vote %d\n", votes);
     }
 }
@@ -136,7 +136,7 @@ class ElectionClosed : MessageExchangeState {
             return new ElectionCompleted(election);
         }
     }
-    override void print() {
+    override void print() const {
         writeln("election closed");
     }
 }
@@ -154,7 +154,7 @@ class ElectionCompleted : MessageExchangeState {
         }
         return new ElectionWon(election);
     }
-    override void print() {
+    override void print() const {
         writeln("election completed");
     }
 }
@@ -173,6 +173,11 @@ class AllOrNothingElection : Election {
     uint voters() { return _voters; }
     uint voted() { return _voted; }
     uint majority() { return _majority; }
+
+    private bool _won;
+    private bool _lost;
+    bool won() { return _won; }
+    bool lost() { return _lost; }
 
     private MessageExchangeState currentState;
     this() {
