@@ -167,17 +167,21 @@ interface Election {
 }
 
 class AllOrNothingElection : Election {
-    private uint _voters = 3;
-    private uint _voted = 3;
-    private uint _majority = 3;
-    uint voters() { return _voters; }
-    uint voted() { return _voted; }
-    uint majority() { return _majority; }
+    private {
+        uint _voters = 3;
+        uint _voted = 3;
+        uint _majority = 3;
+    }
+    @property uint voters() const { return _voters; }
+    @property uint voted() const { return _voted; }
+    @property uint majority() const { return _majority; }
 
-    private bool _won;
-    private bool _lost;
-    bool won() { return _won; }
-    bool lost() { return _lost; }
+    private {
+        bool _won;
+        bool _lost;
+    }
+    @property bool won() const { return _won; }
+    @property bool lost() const { return _lost; }
 
     private MessageExchangeState currentState;
     this() {
