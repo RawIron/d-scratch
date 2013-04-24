@@ -82,7 +82,7 @@ class ReadyToSendStateChange : MessageExchangeState {
     }
     private uint delivered = 0;
     private MessageExchangeState evaluate() {
-        if (delivered < election.voters()) {
+        if (!election.isComplete(delivered)) {
             return this;
         } else {
             return new WaitForVotes(election);
@@ -108,7 +108,7 @@ class WaitForVotes : MessageExchangeState {
     private uint votes = 0;
     override MessageExchangeState voteReceived() {
         ++votes;
-        if (votes < election.voters()) {
+        if (!election.isComplete(votes)) {
             return this;
         } else {
             return new ElectionClosed(election);
@@ -130,7 +130,7 @@ class ElectionClosed : MessageExchangeState {
     private uint received = 0;
     override MessageExchangeState countReceivedVotes() {
         ++received;
-        if (received < election.voted()) {
+        if (!election.hasSufficientVoters(received)) {
             return this;
         } else {
             return new ElectionCompleted(election);
@@ -149,7 +149,7 @@ class ElectionCompleted : MessageExchangeState {
     private uint voted = 0;
     override MessageExchangeState countStateVotes() {
         ++voted;
-        if (voted < election.majority()) {
+        if (!election.hasMajority(voted)) {
             return this;
         }
         return new ElectionWon(election);
@@ -164,6 +164,9 @@ interface Election {
     uint voters();
     uint voted();
     uint majority();
+    bool isComplete(uint);
+    bool hasSufficientVoters(uint);
+    bool hasMajority(uint);
 }
 
 class AllOrNothingElection : Election {
@@ -175,6 +178,9 @@ class AllOrNothingElection : Election {
     @property uint voters() const { return _voters; }
     @property uint voted() const { return _voted; }
     @property uint majority() const { return _majority; }
+    bool isComplete(uint voters) const { return (voters >= _voters); }
+    bool hasSufficientVoters(uint voters) const { return (voters >= _voted); }
+    bool hasMajority(uint voted) const { return (voted >= _majority); }
 
     private {
         bool _won;
