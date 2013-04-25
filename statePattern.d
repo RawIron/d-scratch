@@ -182,6 +182,7 @@ class AllOrNothingElection : Election {
     bool hasSufficientVoters(uint voters) const { return (voters >= _voted); }
     bool hasMajority(uint voted) const { return (voted >= _majority); }
 
+
     private {
         bool _won;
         bool _lost;
@@ -245,4 +246,3 @@ unittest {
 
 
 void main() {}
-
