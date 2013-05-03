@@ -20,20 +20,20 @@ class Single(S,E) {
         currentState.print();
     }
 
-    void messageSent() {
-        currentState = currentState.messageSent();
+    void proposeState() {
+        currentState = currentState.proposeState();
         currentState.print();
     }
-    void voteReceived() {
-        currentState = currentState.voteReceived();
+    void voteForStateReceived() {
+        currentState = currentState.voteForStateReceived();
         currentState.print();
     }
     void countReceivedVotes() {
         currentState = currentState.countReceivedVotes();
         currentState.print();
     }
-    void countStateVotes() {
-        currentState = currentState.countStateVotes();
+    void countVotesForState() {
+        currentState = currentState.countVotesForState();
         currentState.print();
     }
     void timeout() {
