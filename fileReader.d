@@ -5,27 +5,42 @@ import std.file;
 import std.string;
 
 
-string fileReaderUsingReadText() {
-    string fileName = "fileReader.d";
+string fileReaderUsingReadText(in string fileName) {
     string content = readText(fileName);
-    writeln(content);
     return content;
 }
 
-int iterateBySplitLines(in string content) {
-    string[] lines = splitLines(content);
-    int countI = 0;
-    foreach (string line; lines) {
-        if (line.startsWith("i")) {
-            ++countI;
+uint iterateBySplitLines(in string content) {
+    uint importCounter = 0;
+    foreach (string line; splitLines(content)) {
+        if (line.startsWith("import")) {
+            ++importCounter;
         }
     }
-    return countI;
+    return importCounter;
+}
+
+
+uint iterateByLinesStruct(File content) {
+    uint importCounter = 0;
+    foreach (string line; lines(content)) {
+        if (line.startsWith("import")) {
+            ++importCounter;
+        }
+    }
+    return importCounter;
 }
 
 
 void main() {
-    auto content = fileReaderUsingReadText();
-    iterateBySplitLines(content);
+    string fileName = "fileReader.d";
+    uint numberOfImports = 0;
+
+    string content = fileReaderUsingReadText(fileName);
+    numberOfImports = iterateBySplitLines(content);
+    writeln(numberOfImports);
+
+    numberOfImports = iterateByLinesStruct(File(fileName, "r"));
+    writeln(numberOfImports);
 }
 
