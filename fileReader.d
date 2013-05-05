@@ -10,14 +10,18 @@ string fileReaderUsingReadText(in string fileName) {
     return content;
 }
 
-uint iterateBySplitLines(in string content) {
+uint iterateBySplitClosure(in string[] delegate() generator) {
     uint importCounter = 0;
-    foreach (string line; splitLines(content)) {
+    foreach (string line; generator()) {
         if (line.startsWith("import")) {
             ++importCounter;
         }
     }
     return importCounter;
+}
+
+string[] delegate() closureBySplit(string content) {
+    return delegate string[]() { return splitLines(content); };
 }
 
 
@@ -31,7 +35,6 @@ uint iterateByLinesStruct(File content) {
     return importCounter;
 }
 
-
 /*
  * does not compile ..
 lines delegate() closureByLines(File content) {
@@ -40,35 +43,19 @@ lines delegate() closureByLines(File content) {
 */
 
 
-uint iterateBySplitClosure(in string[] delegate() f) {
-    uint importCounter = 0;
-    foreach (string line; f()) {
-        if (line.startsWith("import")) {
-            ++importCounter;
-        }
-    }
-    return importCounter;
-}
-
-string[] delegate() closureBySplit(string content) {
-    return delegate string[]() { return splitLines(content); };
-}
-
 
 void main() {
     string fileName = "fileReader.d";
     uint numberOfImports = 0;
-
-    string content = fileReaderUsingReadText(fileName);
-    numberOfImports = iterateBySplitLines(content);
-    writeln(numberOfImports);
-
-    numberOfImports = iterateByLinesStruct(File(fileName, "r"));
-    writeln(numberOfImports);
+    string content;
 
     content = fileReaderUsingReadText(fileName);
     string[] delegate() f = closureBySplit(content);
     numberOfImports = iterateBySplitClosure(f);
     writeln(numberOfImports);
+
+    numberOfImports = iterateByLinesStruct(File(fileName, "r"));
+    writeln(numberOfImports);
+
 }
 
