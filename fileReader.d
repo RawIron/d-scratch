@@ -52,10 +52,9 @@ void main() {
     content = fileReaderUsingReadText(fileName);
     string[] delegate() f = closureBySplit(content);
     numberOfImports = iterateBySplitClosure(f);
-    writeln(numberOfImports);
+    assert(numberOfImports == 3);
 
     numberOfImports = iterateByLinesStruct(File(fileName, "r"));
-    writeln(numberOfImports);
-
+    assert(numberOfImports == 3);
 }
 
