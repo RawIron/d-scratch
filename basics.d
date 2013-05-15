@@ -44,9 +44,39 @@ unittest {
     auto c = new Constness();
     // c.printImmutable();
     assert(c.printConst()==4);
-    c.increase(4);
+    c.increaseBy(4);
     assert(c.printConst()==8);
 }
 
-void main() { }
+
+unittest {
+    struct Settings {
+        bool flag = false;
+        string log = "";
+    }
+
+    Settings config;
+    assert(config.flag == false);
+    assert(config.log == "");
+}
+
+unittest {
+    string aString = "compare to something else";
+    string anotherString = "compare to something else";
+
+    assert(aString !is anotherString);
+    assert(aString == anotherString);
+}
+
+
+unittest {
+    uint[] series;
+    assert(series.length == 0);
+    series[series.length] = 5;
+    assert(series.length == 1);
+    assert(series[series.length-1] == 5);
+}
+
+
+void main() {}
 
