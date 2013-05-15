@@ -70,11 +70,19 @@ unittest {
 
 
 unittest {
-    uint[] series;
-    assert(series.length == 0);
-    series[series.length] = 5;
-    assert(series.length == 1);
-    assert(series[series.length-1] == 5);
+    immutable ubyte CHUNK_SIZE = 64;
+    uint[] series = new uint[CHUNK_SIZE];
+    assert(series.length == CHUNK_SIZE);
+    series[0] = 5;
+    assert(series.length == CHUNK_SIZE);
+}
+
+unittest {
+    /**
+    // does not compile
+    class Parent { public static string method() { return "parent"; } }
+    class Child : Parent { public override static string method() { return "child"; } }
+    */
 }
 
 

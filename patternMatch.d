@@ -29,7 +29,7 @@ unittest {
 }
 
 string[] createPattern() {
-    string[] patterns;
+    string[] patterns = new string[2];
     patterns[0] = r"^BEGIN";
     patterns[1] = r"^END";
     return patterns;
