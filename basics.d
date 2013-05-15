@@ -64,7 +64,7 @@ unittest {
     string aString = "compare to something else";
     string anotherString = "compare to something else";
 
-    assert(aString !is anotherString);
+    assert(aString is anotherString);
     assert(aString == anotherString);
 }
 

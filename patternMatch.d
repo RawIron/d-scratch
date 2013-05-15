@@ -1,4 +1,3 @@
-#!/usr/bin/env rdmd
 
 import std.regex;
 import std.stream;
@@ -11,21 +10,28 @@ class MatchEngine {
     }
 }
 
+unittest {
+    MatchEngine me = new MatchEngine();
+    me.receive().take();
+}
+
 void matchEngine(Stream quotes, in Regex!char[] patterns, Stream matches) {
 }
 
 
-void compilePattern() {
-    regex(r"^BEGIN");
+Regex!char compilePattern() {
+    return regex(r"^BEGIN");
 }
 
 unittest {
+    Regex!char r = compilePattern();
+    assert(match("BEGIN", r));
 }
 
 string[] createPattern() {
     string[] patterns;
-    patterns[patterns.length] = r"^BEGIN";
-    patterns[patterns.length] = r"^END";
+    patterns[0] = r"^BEGIN";
+    patterns[1] = r"^END";
     return patterns;
 }
 
@@ -38,10 +44,6 @@ unittest {
 void main() {
     Stream quotes = new MemoryStream();
     Stream matches = new MemoryStream();
-    compilePattern();
-
-    MatchEngine me = new MatchEngine();
-    me.receive().take();
 
     /*
     matchEngine(quotes, patterns, matches);
