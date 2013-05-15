@@ -85,6 +85,25 @@ unittest {
     */
 }
 
+unittest {
+    class GenericKlass(T) {
+        private T decorated;
+        public this(T decorated) {
+            this.decorated = decorated;
+        }
+        public string echo() { return decorated.echo(); }
+    }
+    class CanEcho {
+        public string echo() { return "can echo"; }
+    }
+
+    (GenericKlass!CanEcho)[] echos = new (GenericKlass!CanEcho)[2];
+    
+    foreach(k; echos) {
+        k.echo();
+    }
+}
+
 
 void main() {}
 

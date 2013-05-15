@@ -19,16 +19,18 @@ void matchEngine(Stream quotes, in Regex!char[] patterns, Stream matches) {
 }
 
 
-Regex!char compilePattern() {
-    return regex(r"^BEGIN");
+(Regex!char)[] compilePatterns(string[] regexpressions) {
+    (Regex!char)[] compiledPatterns = new (Regex!char)[1];
+    compiledPatterns[0] = regex(regexpressions[0]);
+    return compiledPatterns;
 }
 
 unittest {
-    Regex!char r = compilePattern();
-    assert(match("BEGIN", r));
+    (Regex!char)[] regexpression = compilePatterns([r"^BEGIN",]);
+    assert(match("BEGIN", regexpression[0]));
 }
 
-string[] createPattern() {
+string[] createPatterns() {
     string[] patterns = new string[2];
     patterns[0] = r"^BEGIN";
     patterns[1] = r"^END";
@@ -36,7 +38,7 @@ string[] createPattern() {
 }
 
 unittest {
-    string[] patterns = createPattern();
+    string[] patterns = createPatterns();
     assert(patterns[0] == r"^BEGIN");
 }
 
