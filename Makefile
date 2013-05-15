@@ -1,4 +1,7 @@
 
+patternMatch:	patternMatch.d
+	dmd -unittest patternMatch.d
+
 statePattern:	statePattern.d
 	dmd -unittest statePattern.d
 
@@ -10,4 +13,5 @@ basics:	basics.d
 
 clean:
 	rm -f *.o
-	rm -f statePattern basics
+	rm -f statePattern basics patternMatch
+	rm -f *.d.deps
