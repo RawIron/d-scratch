@@ -70,7 +70,7 @@ unittest {
 
 
 unittest {
-    immutable ubyte CHUNK_SIZE = 64;
+    immutable CHUNK_SIZE = 64;
     uint[] series = new uint[CHUNK_SIZE];
     assert(series.length == CHUNK_SIZE);
     series[0] = 5;
@@ -85,6 +85,36 @@ unittest {
     */
 }
 
+
+unittest {
+    class StoryTeller {
+        private string story = "is sparta";
+        this(string prolog) {
+            story = prolog ~ story;
+        }
+        public abstract string tell();
+    }
+    class MovieStory : StoryTeller {
+        this(string prolog) {
+            super(prolog);
+        }
+        override public string tell() {
+            return story;
+        }
+    }
+    MovieStory story = new MovieStory("this ");
+    assert(story.tell() == "this is sparta");
+}
+
+unittest {
+    string[] s = new string[2];
+    s ~= "whereIsIt";
+    assert(s.length == 3);
+    assert(s[0] is null);
+    assert(s[2] == "whereIsIt");
+}
+
+/*
 unittest {
     class GenericKlass(T) {
         private T decorated;
@@ -103,7 +133,7 @@ unittest {
         k.echo();
     }
 }
-
+*/
 
 void main() {}
 
