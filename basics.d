@@ -77,14 +77,6 @@ unittest {
     assert(series.length == CHUNK_SIZE);
 }
 
-unittest {
-    /**
-    // does not compile
-    class Parent { public static string method() { return "parent"; } }
-    class Child : Parent { public override static string method() { return "child"; } }
-    */
-}
-
 
 unittest {
     class StoryTeller {
@@ -114,26 +106,38 @@ unittest {
     assert(s[2] == "whereIsIt");
 }
 
-/*
 unittest {
-    class GenericKlass(T) {
-        private T decorated;
-        public this(T decorated) {
-            this.decorated = decorated;
+    uint[] numbers;
+    numbers ~= 4;
+    assert(numbers.length == 1);
+    assert(numbers[0] == 4);
+}
+
+
+unittest {
+    class Mine(T){
+        private T digger;
+        this(T digger) {
+            this.digger = digger;
         }
-        public string echo() { return decorated.echo(); }
+        public uint dig() {
+            return digger.work();
+        }
     }
-    class CanEcho {
-        public string echo() { return "can echo"; }
+    class Miner {
+        private immutable produces = 4;
+        public uint work() {
+            return produces;
+        }
     }
 
-    (GenericKlass!CanEcho)[] echos = new (GenericKlass!CanEcho)[2];
-    
-    foreach(k; echos) {
-        k.echo();
+    Mine!Miner[] coalMines = new Mine!Miner[5];
+    foreach (ref mine; coalMines) {
+        mine = new Mine!Miner(new Miner());
     }
+    assert(coalMines[2].dig() == 4);   
 }
-*/
+
 
 void main() {}
 
