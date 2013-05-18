@@ -19,15 +19,17 @@ void matchEngine(Stream quotes, in Regex!char[] patterns, Stream matches) {
 }
 
 
-(Regex!char)[] compilePatterns(string[] regexpressions) {
-    (Regex!char)[] compiledPatterns = new (Regex!char)[1];
+Regex!char[] compilePatterns(string[] regexpressions) {
+    Regex!char[] compiledPatterns = new Regex!char[2];
     compiledPatterns[0] = regex(regexpressions[0]);
+    compiledPatterns[1] = regex(regexpressions[1]);
     return compiledPatterns;
 }
 
 unittest {
-    (Regex!char)[] regexpression = compilePatterns([r"^BEGIN",]);
-    assert(match("BEGIN", regexpression[0]));
+    Regex!char[] regexpression = compilePatterns([r"^BEGIN", r"^END",]);
+    auto found = match("BEGIN OF", regexpression[0]);
+    assert("BEGIN" == found.hit);
 }
 
 string[] createPatterns() {

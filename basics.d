@@ -98,6 +98,7 @@ unittest {
     assert(story.tell() == "this is sparta");
 }
 
+
 unittest {
     string[] s = new string[2];
     s ~= "whereIsIt";

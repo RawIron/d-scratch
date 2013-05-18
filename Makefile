@@ -9,7 +9,7 @@ twoPhase:	twoPhaseCommit.d
 	dmd -unittest twoPhaseCommit.d
 
 basics:	basics.d
-	dmd -w -wi -unittest basics.d
+	dmd -w -wi -cov -unittest basics.d
 
 clean:
 	rm -f *.o
