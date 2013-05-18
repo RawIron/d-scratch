@@ -139,6 +139,28 @@ unittest {
     assert(coalMines[2].dig() == 4);   
 }
 
+unittest {
+    class CodeShare {
+        private {
+            uint counter = 0;
+        }
+        public {
+            uint currentCount() {
+                return counter;
+            }
+            abstract void count();
+        }
+    }
+    class UseTheCode : CodeShare {
+        override public void count() {
+            ++counter;
+        }
+    }
+    CodeShare doTheCount = new UseTheCode;
+    doTheCount.count();
+    assert(1 == doTheCount.currentCount());
+}
+
 
 void main() {}
 

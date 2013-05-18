@@ -5,6 +5,9 @@ import std.stdio;
 
 abstract class MessageExchangeState {
     private Election election;
+    this(Election e) {
+        election = e;
+    }
     MessageExchangeState messageSent() {
         return new Invalid(election);
     }
@@ -25,9 +28,8 @@ abstract class MessageExchangeState {
 
 
 class Invalid : MessageExchangeState {
-    private Election election;
     this(Election e) {
-        election = e;
+        super(e);
     }
     override void print() const {
         writeln("invalid");
@@ -35,9 +37,8 @@ class Invalid : MessageExchangeState {
 }
 
 class MessagesSentFailed : MessageExchangeState {
-    private Election election;
     this(Election e) {
-        election = e;
+        super(e);
     }
     override void print() const {
         writeln("sent failed");
@@ -45,9 +46,8 @@ class MessagesSentFailed : MessageExchangeState {
 }
 
 class ElectionFailed : MessageExchangeState {
-    private Election election;
     this(Election e) {
-        election = e;
+        super(e);
     }
     override void print() const {
         writeln("election failed");
@@ -55,9 +55,8 @@ class ElectionFailed : MessageExchangeState {
 }
 
 class ElectionLost : MessageExchangeState {
-    private Election election;
     this(Election e) {
-        election = e;
+        super(e);
     }
     override void print() const {
         writeln("election lost");
@@ -65,9 +64,8 @@ class ElectionLost : MessageExchangeState {
 }
 
 class ElectionWon : MessageExchangeState {
-    private Election election;
     this(Election e) {
-        election = e;
+        super(e);
     }
     override void print() const {
         writeln("election won");
@@ -76,9 +74,8 @@ class ElectionWon : MessageExchangeState {
 
 
 class ReadyToSendStateChange : MessageExchangeState {
-    private Election election;
     this(Election e) {
-        election = e;
+        super(e);
     }
     private uint delivered = 0;
     private MessageExchangeState evaluate() {
@@ -101,9 +98,8 @@ class ReadyToSendStateChange : MessageExchangeState {
 }
 
 class WaitForVotes : MessageExchangeState {
-    private Election election;
     this(Election e) {
-        election = e;
+        super(e);
     }
     private uint votes = 0;
     override MessageExchangeState voteReceived() {
@@ -123,9 +119,8 @@ class WaitForVotes : MessageExchangeState {
 }
 
 class ElectionClosed : MessageExchangeState {
-    private Election election;
     this(Election e) {
-        election = e;
+        super(e);
     }
     private uint received = 0;
     override MessageExchangeState countReceivedVotes() {
@@ -142,9 +137,8 @@ class ElectionClosed : MessageExchangeState {
 }
 
 class ElectionCompleted : MessageExchangeState {
-    private Election election;
     this(Election e) {
-        election = e;
+        super(e);
     }
     private uint voted = 0;
     override MessageExchangeState countStateVotes() {
