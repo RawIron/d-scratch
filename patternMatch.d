@@ -21,21 +21,22 @@ void matchEngine(Stream quotes, in Regex!char[] patterns, Stream matches) {
 
 Regex!char[] compilePatterns(string[] regexpressions) {
     Regex!char[] compiledPatterns = new Regex!char[2];
-    compiledPatterns[0] = regex(regexpressions[0]);
-    compiledPatterns[1] = regex(regexpressions[1]);
+    foreach (i, regexpression; regexpressions) {
+        compiledPatterns[i] = regex(regexpression);
+    }
     return compiledPatterns;
 }
 
 unittest {
     Regex!char[] regexpression = compilePatterns([r"^BEGIN", r"^END",]);
-    auto found = match("BEGIN OF", regexpression[0]);
+    RegexMatch!(string,ThompsonMatcher) found = match("BEGIN OF", regexpression[0]);
     assert("BEGIN" == found.hit);
+    found = match("BGEIN OF", regexpression[0]);
+    assert(!found);
 }
 
 string[] createPatterns() {
-    string[] patterns = new string[2];
-    patterns[0] = r"^BEGIN";
-    patterns[1] = r"^END";
+    string[] patterns = [r"^BEGIN", r"^END", ];
     return patterns;
 }
 
