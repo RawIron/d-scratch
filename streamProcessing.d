@@ -5,8 +5,7 @@ import std.stdio : write, writeln;
 import std.range;
 
 
-void
-printGreetingsWithLambda(Range)(in Range names) 
+void printGreetingsWithLambda(Range)(in Range names) 
     if (isInputRange!Range)
 {
     string function(string) f = function string(string a) { return ("Hello! " ~ a); };
@@ -15,19 +14,18 @@ printGreetingsWithLambda(Range)(in Range names)
     }
 }
 
-/*
-Result streamProcessing(in Range names) {
+auto streamProcessing(Range)(in Range names)
+    if (isInputRange!Range)
+{
     return map!(function string(string a) { return ("Hello!" ~ a ~ "\n"); })(names);
 }
-*/
 
 
 void main() {
     string[] names = ["Anders", "David", "James", "Jeff", "Joe", "Erik"];
-    string[] greetings;
 
     printGreetingsWithLambda(names);
-    //greetings = streamProcessing(names);
+    auto greetings = streamProcessing(names);
     foreach (greeting; greetings) {
         write(greeting);
     }
