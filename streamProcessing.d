@@ -1,28 +1,33 @@
 #!/usr/bin/env rdmd
 
-import std.algorithm : chain, map, copy, Result;
+import std.algorithm : chain, map, copy;
 import std.stdio : write, writeln;
+import std.range;
 
 
-void printGreetingsWithLambda() {
-    string[] names = ["Anders", "David", "James", "Jeff", "Joe", "Erik"];
-    auto f = function string(string a) { return ("Hello! " ~ a); };
+void
+printGreetingsWithLambda(Range)(in Range names) 
+    if (isInputRange!Range)
+{
+    string function(string) f = function string(string a) { return ("Hello! " ~ a); };
     foreach (name; names) {
         writeln(f(name));
     }
 }
 
-Result streamProcessing(string[] names) {
+/*
+Result streamProcessing(in Range names) {
     return map!(function string(string a) { return ("Hello!" ~ a ~ "\n"); })(names);
 }
+*/
 
 
 void main() {
     string[] names = ["Anders", "David", "James", "Jeff", "Joe", "Erik"];
-    Result greetings;
+    string[] greetings;
 
-    printGreetingsWithLambda();
-    greetings = streamProcessing(names);
+    printGreetingsWithLambda(names);
+    //greetings = streamProcessing(names);
     foreach (greeting; greetings) {
         write(greeting);
     }
