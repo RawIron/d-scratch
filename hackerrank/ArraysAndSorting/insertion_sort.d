@@ -5,27 +5,27 @@ import std.stdio, std.algorithm;
 import std.array;
 
 
-enum ENV: int {LOCAL, SUBMIT};
-enum WHAT: int {TOTAL_TESTS, TOTAL_ENTRIES, ENTRIES};
+enum env: int {local, submit};
+enum what: int {TOTAL_TESTS, TOTAL_ENTRIES, entries};
 
-const ENV env = ENV.LOCAL;
+const env my_env = env.local;
 
 
-template match(T...){
-  string data = din.readLine();
+template match(env e : env.submit) {
+  string data(what w) {
+    return din.readLine();
+  }
 }
 
-template match(ENV e : ENV.SUBMIT) {
-  string data = din.readLine();
+template match(env e : env.local) {
+  string data(what w) {
+    return "1";
+  }
 }
 
-template match(ENV e : ENV.LOCAL) {
-  string data = "1";
-}
 
-
-string reader() {
-  return match!(env).data;
+string reader(what w) {
+  return match!(my_env).data(w);
 }
 
 
@@ -47,7 +47,7 @@ int main() {
   int numberOfTests = 1;
   int[] population = new int[numberOfEntries];
 
-  numberOfEntries = to!int(reader());
+  numberOfEntries = to!int(reader(what.entries));
 
   foreach (i; 0..numberOfTests) {
     population = splitter("3 5 1".strip(' ')).map!(to!int).array;
