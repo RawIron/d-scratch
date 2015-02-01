@@ -19,7 +19,11 @@ template match(Env e : Env.submit) {
 
 template match(Env e : Env.local) {
   string data(What w) {
-    return "1";
+    final switch (w) {
+    case What.entries: return "5 3 1";
+    case What.totalTests: return "1";
+    case What.totalEntries: return "3";
+    }
   }
 }
 
@@ -47,10 +51,12 @@ int main() {
   int numberOfTests = 1;
   int[] population = new int[numberOfEntries];
 
-  numberOfEntries = to!int(reader(What.entries));
+  numberOfTests = to!int(reader(What.totalTests));
 
   foreach (i; 0..numberOfTests) {
-    population = splitter("3 5 1".strip(' ')).map!(to!int).array;
+    numberOfEntries = to!int(reader(What.totalEntries));
+    population = splitter(reader(What.entries).strip(' ')).map!(to!int).array;
+
     insertionSort(population);
     printSorted(population);
   }
