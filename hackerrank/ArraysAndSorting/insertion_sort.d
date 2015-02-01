@@ -1,38 +1,31 @@
 #!/usr/bin/rdmd
 
-import std.stdio, std.conv;
+import std.conv : to;
+import std.stdio, std.algorithm;
+import std.array;
 
 
 enum ENV: int {LOCAL, SUBMIT};
 enum WHAT: int {TOTAL_TESTS, TOTAL_ENTRIES, ENTRIES};
 
-struct conf {
-  immutable ENV env;
-  WHAT read_what;
-}
+const ENV env = ENV.LOCAL;
+
 
 template match(T...){
   string data = din.readLine();
 }
 
-template match(ENV e : SUBMIT) {
+template match(ENV e : ENV.SUBMIT) {
   string data = din.readLine();
 }
 
-template match(ENV e : LOCAL, WHAT w: TOTAL_TESTS) {
+template match(ENV e : ENV.LOCAL) {
   string data = "1";
 }
 
-template match(ENV e : LOCAL, WHAT w: TOTAL_ENTRIES) {
-  string data = "3";
-}
 
-template match(ENV e : LOCAL, WHAT w: ENTRIES) {
-  string data = "3 5 8";
-}
-
-string reader(conf) {
-  return match!(conf.env, conf.read_what).data;
+string reader() {
+  return match!(env).data;
 }
 
 
@@ -50,19 +43,18 @@ void print_sorted(int[] sorted) {
 
 
 int main() {
-  conf conf = {LOCAL, TOTAL_TESTS};
-
-  immutable int numberOfEntries;
-  immutable int numberOfTests;
+  int numberOfEntries = 0;
+  int numberOfTests = 1;
   int[] population = new int[numberOfEntries];
 
-  numberOfEntries = toInt(reader(conf));
+  numberOfEntries = to!int(reader());
 
-  foreach (i; 0 .. numberOfTests) {
-    population = splitter(strip("3 5 1"));
-
+  foreach (i; 0..numberOfTests) {
+    population = splitter("3 5 1".strip(' ')).map!(to!int).array;
     insertion_sort(population);
+    print_sorted(population);
   }
 
   return 1;
 }
+
