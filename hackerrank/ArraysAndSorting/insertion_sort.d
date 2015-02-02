@@ -17,12 +17,19 @@ template match(Env e : Env.submit) {
   }
 }
 
-template match(Env e : Env.local) {
+template match(Env e : Env.local)
+{
   string data(What w) {
     final switch (w) {
     case What.entries: return "5 3 1";
     case What.totalTests: return "1";
     case What.totalEntries: return "3";
+    }
+  }
+
+  void print(int[] sorted) {
+    foreach (entry; sorted) {
+      writeln(entry);
     }
   }
 }
@@ -32,16 +39,20 @@ string reader(What w) {
   return match!(myEnv).data(w);
 }
 
-
-void insertionSort(int[] that) {
-  foreach (entry; that) {
-    writeln(entry);
-  }
+void print(int[] sorted) {
+  match!(myEnv).print(sorted);
 }
 
-void printSorted(int[] sorted) {
-  foreach (entry; sorted) {
-    writeln(entry);
+
+void insertionSort(int[] that) {
+  int keep, j;
+
+  for (int i=1; i < that.length; i++) {
+    keep = that[i];
+    for (j = i-1; j >= 0 && that[j] > keep; j--) {
+      that[j+1] = that[j];
+    }
+    that[j+1] = keep;
   }
 }
 
@@ -58,7 +69,8 @@ int main() {
     population = splitter(reader(What.entries).strip(' ')).map!(to!int).array;
 
     insertionSort(population);
-    printSorted(population);
+
+    print(population);
   }
 
   return 1;
