@@ -1,7 +1,7 @@
 #!/usr/bin/rdmd
 
 import std.conv : to;
-import std.stdio, std.algorithm;
+import std.stdio, std.cstream, std.algorithm;
 import std.array;
 
 
@@ -13,7 +13,10 @@ const Env myEnv = Env.local;
 
 template match(Env e : Env.submit) {
   string data(What w) {
-    return din.readLine();
+    return to!string(din.readLine());
+  }
+
+  void print(int[] sorted) {
   }
 }
 
@@ -44,16 +47,20 @@ void print(int[] sorted) {
 }
 
 
-void insertionSort(int[] that) {
+int insertionSort(int[] that) {
   int keep, j;
+  int shifts = 0;
 
   for (int i=1; i < that.length; i++) {
     keep = that[i];
     for (j = i-1; j >= 0 && that[j] > keep; j--) {
       that[j+1] = that[j];
+      shifts++;
     }
     that[j+1] = keep;
   }
+
+  return shifts;
 }
 
 
@@ -61,6 +68,7 @@ int main() {
   int numberOfEntries = 0;
   int numberOfTests = 1;
   int[] population = new int[numberOfEntries];
+  int shifts = 0;
 
   numberOfTests = to!int(reader(What.totalTests));
 
@@ -68,11 +76,12 @@ int main() {
     numberOfEntries = to!int(reader(What.totalEntries));
     population = splitter(reader(What.entries).strip(' ')).map!(to!int).array;
 
-    insertionSort(population);
+    shifts = insertionSort(population);
 
     print(population);
+    writeln(shifts);
   }
 
-  return 1;
+  return 0;
 }
 
