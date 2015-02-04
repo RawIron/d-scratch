@@ -8,28 +8,29 @@ import std.array, std.container;
 void print(int[] sorted)
 {
   foreach (entry; sorted) {
-    writeln(entry);
+    write(to!string(entry) ~ " ");
   }
+  writeln;
 }
 
 
 int[] quicksort(int[] that)
 {
-  Array!int left;
-  Array!int right;
+  int[] left;
+  int[] right;
 
   int p = that[0];
   that = that[1..$];
 
   foreach (entry; that) {
     if (entry <= p)
-      left.insertBack(entry);
+      left ~= entry;
     else
-      right.insertBack(entry);
+      right ~= entry;
   }
-  left.insertBack(p);
+  left ~= p;
 
-  return join(left, right);
+  return left ~ right;
 }
 
 
