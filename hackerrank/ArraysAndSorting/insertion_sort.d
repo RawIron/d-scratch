@@ -5,45 +5,12 @@ import std.stdio, std.cstream, std.algorithm;
 import std.array;
 
 
-enum Env: int {local, submit};
-enum What: int {totalTests, totalEntries, entries};
-
-const Env myEnv = Env.local;
-
-
-template match(Env e : Env.submit) {
-  string data(What w) {
-    return to!string(din.readLine());
-  }
-
-  void print(int[] sorted) {
-  }
-}
-
-template match(Env e : Env.local)
+void print(int[] sorted)
 {
-  string data(What w) {
-    final switch (w) {
-    case What.entries: return "5 3 1";
-    case What.totalTests: return "1";
-    case What.totalEntries: return "3";
-    }
+  foreach (entry; sorted) {
+    write(to!string(entry) ~ " ");
   }
-
-  void print(int[] sorted) {
-    foreach (entry; sorted) {
-      writeln(entry);
-    }
-  }
-}
-
-
-string reader(What w) {
-  return match!(myEnv).data(w);
-}
-
-void print(int[] sorted) {
-  match!(myEnv).print(sorted);
+  writeln;
 }
 
 
@@ -66,21 +33,18 @@ int insertionSort(int[] that) {
 
 int main() {
   int numberOfEntries = 0;
-  int numberOfTests = 1;
   int[] population = new int[numberOfEntries];
   int shifts = 0;
 
-  numberOfTests = to!int(reader(What.totalTests));
+  //numberOfEntries = to!int(din.readLine());
+  //population = splitter(din.readLine().strip(' ')).map!(to!int).array;
+  numberOfEntries = 4;
+  population = splitter("3 5 2 8".strip(' ')).map!(to!int).array;
 
-  foreach (i; 0..numberOfTests) {
-    numberOfEntries = to!int(reader(What.totalEntries));
-    population = splitter(reader(What.entries).strip(' ')).map!(to!int).array;
+  shifts = insertionSort(population);
 
-    shifts = insertionSort(population);
-
-    print(population);
-    writeln(shifts);
-  }
+  print(population);
+  writeln(shifts);
 
   return 0;
 }
