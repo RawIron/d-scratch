@@ -1,14 +1,22 @@
-#!/usr/bin/rdmd
+#!/usr/bin/env rdmd
 
 import std.stdio, std.algorithm;
 
-
-int main()
+unittest
 {
   int[] energy;
+  energy ~= 5;
 
-  energy ~= 1;
-  foreach (e; energy) writeln(e);
-
-  return 0;
+  assert(energy.length == 1);
+  assert(energy[0] == 5);
 }
+
+unittest
+{
+  int[10] energy;
+
+  assert(energy[3..6].length == 3);
+}
+
+
+void main() {}

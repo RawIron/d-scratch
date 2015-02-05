@@ -1,3 +1,5 @@
+arrays: arrays.d
+	dmd -unittest arrays.d
 
 patternMatch:	patternMatch.d
 	dmd -unittest patternMatch.d
@@ -13,5 +15,5 @@ basics:	basics.d
 
 clean:
 	rm -f *.o
-	rm -f statePattern basics patternMatch
+	rm -f statePattern basics patternMatch arrays
 	rm -f *.d.deps
