@@ -2,6 +2,10 @@
 
 import std.conv : to;
 import std.stdio, std.cstream, std.algorithm;
+import std.array;
+
+
+int[] emptyArray;
 
 
 void print(int[] sorted)
@@ -32,16 +36,18 @@ int[] quicksort(int[] that)
 {
   int[] inplace(int[] that, int left, int p, int right)
   {
-    if (that.empty || that[left..right].length == 1) return that;
-    else if (that[left..right].length == 2) swapIfReverse(that, 0, 1);
+    if (left >= right) return emptyArray;
     
     int cutHere = 0;
     int i = 0;
     while (i < that[left..right].length) {
-      if (that[i] > p)
-        boolean foundSwap = false;
-        int j = i;
-        while (! foundSwap && j<right) {
+      if (that[i] <= p) {
+        ++cutHere;
+      }
+      else {
+        bool foundSwap = false;
+        int j = i+1;
+        while (!foundSwap && j<=right) {
           if (that[j] <= p) {
             swap(that, i, j);
             foundSwap = true;
@@ -49,19 +55,25 @@ int[] quicksort(int[] that)
           }
           ++j;
         }
+      }
+      ++i;
     }
 
-    int[] leftSorted = inplace(that, left, p, right);
+    int[] sorted = swap(that, left + cutHere, right+1);
+
+    int[] leftSorted = inplace(that, left, that[left + cutHere], left + cutHere-1);
+    write("left");
     if (leftSorted[].length > 1) print(leftSorted);
-    int[] rightSorted = inplace(that, left, p, right);
+
+    int[] rightSorted = inplace(that, left + cutHere+1, that[right+1], right);
+    write("right");
     if (rightSorted[].length > 1) print(rightSorted);
 
-    sorted = swap(that, right, p);
-
-    return sorted;
+    return that[left..right+1];
   }
 
-  return inplace(that, 0, that[$], that.length-2);
+  if (that.length <= 1) return that;
+  else return inplace(that, 0, that[$-1], to!int(that.length-2));
 }
 
 
@@ -77,7 +89,7 @@ int main()
 
   int[] sorted = quicksort(population);
 
-  print(sorted);
+  print(population);
 
   return 0;
 }
