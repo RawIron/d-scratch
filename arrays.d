@@ -1,6 +1,8 @@
 #!/usr/bin/env rdmd
 
 import std.stdio, std.algorithm;
+import core.exception;
+
 
 unittest
 {
@@ -16,6 +18,19 @@ unittest
   int[10] energy;
 
   assert(energy[3..6].length == 3);
+}
+
+unittest
+{
+  int[10] energy;
+  int[] empty;
+
+  try {
+    assert(energy[1..0] == empty);
+    assert(false);
+  }
+  catch (RangeError e)
+    assert(true);
 }
 
 
