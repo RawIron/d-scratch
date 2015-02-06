@@ -33,5 +33,13 @@ unittest
     assert(true);
 }
 
+unittest
+{
+  int[10] energy;
+
+  energy[9] = 3;
+  assert(energy[$-1] == 3);
+}
+
 
 void main() {}
