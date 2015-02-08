@@ -41,6 +41,14 @@ unittest  // $ equals length
   assert(energy[$-1] == 3);
 }
 
+unittest  // slice 0..0 is empty
+{
+  int[4] energy;
+
+  assert(energy[0..0].length == 0);
+  assert(energy[1..1].length == 0);
+}
+
 unittest
 {
   int[] energy = new int[4];
