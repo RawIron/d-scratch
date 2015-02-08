@@ -9,12 +9,17 @@ int[] emptyArray;
 
 
 enum ptree = true;
-enum tabSize = 2;
 
 struct Print {
+  enum tabSize = 2;
   int height = 0;
   char[tabSize] tab = "  ";
   char[] ident;
+
+  void dive() {
+    ++height;
+    ident ~= tab;
+  }
 }
 
 void print(int[] sorted)
@@ -26,12 +31,11 @@ void print(int[] sorted)
 }
 
 
-int[] swap(int[] that, int i, int j)
+void swap(int[] that, int i, int j)
 {
   int tmp = that[i];
   that[i] = that[j];
   that[j] = tmp;
-  return that;
 }
 
 
@@ -39,23 +43,22 @@ int[] quicksort(int[] that)
 {
   int[] inplace(int[] that, int left, int p, int right, Print d)
   {
-    ++d.height;
-    d.ident ~= d.tab;
     writefln("%s called %d %d %d", d.ident, left, p, right);
 
-    if (left > right) return emptyArray;
-    
+    if (left > right) return that;
+
     int cutHere = 0;
-    int i = 0;
-    while (i < that[left..right].length) {
-      if (that[i] <= p) {
+    int i = left;
+    while (i < left + that[left..right+1].length) {
+      if (that[i] <= that[p]) {
+        swap(that, i, left + cutHere);
         ++cutHere;
       }
       else {
         bool foundSwap = false;
         int j = i+1;
         while (!foundSwap && j<=right) {
-          if (that[j] <= p) {
+          if (that[j] <= that[p]) {
             swap(that, i, j);
             foundSwap = true;
             ++cutHere;
@@ -66,23 +69,22 @@ int[] quicksort(int[] that)
       ++i;
     }
 
-    if (cutHere < that[left..right].length) {
-      int[] sorted = swap(that, left + cutHere, right+1);
+    if (cutHere < that[left..right+1].length) {
+      swap(that, left + cutHere, right+1);
     }
-    else {
-    }
+    writef("%s root ", d.ident);
+    writefln("%s", that);
 
-    int[] leftSorted = inplace(that, left, that[left + cutHere], left + cutHere-1, d);
+    d.dive();
+    inplace(that, left, left + cutHere-1, left + cutHere-2, d);
     writef("%s left ", d.ident);
-    writefln("%s", leftSorted);
-    //if (leftSorted.length > 1) print(leftSorted);
+    writefln("%s", that);
 
-    int[] rightSorted = inplace(that, left + cutHere+1, that[right+1], right, d);
+    inplace(that, left + cutHere+1, right+1, right, d);
     writef("%s right ", d.ident);
-    writefln("%s", rightSorted);
-    //if (rightSorted.length > 1) print(rightSorted);
+    writefln("%s", that);
 
-    return that[left..right+1];
+    return that;
   }
 
   static if (ptree) {
@@ -90,7 +92,71 @@ int[] quicksort(int[] that)
   }
 
   if (that.length <= 1) return that;
-  else return inplace(that, 0, that[$-1], to!int(that.length-2), d);
+  else return inplace(that, 0, to!int(that.length-1), to!int(that.length-2), d);
+}
+
+
+unittest
+{
+  int[] population = [1];
+  int[] expected = [1];
+  assert(quicksort(population) == expected);
+}
+
+unittest
+{
+  int[] population = [0,0];
+  int[] expected = [0,0];
+  assert(quicksort(population) == expected);
+}
+
+unittest
+{
+  int[] population = [0,1];
+  int[] expected = [0,1];
+  assert(quicksort(population) == expected);
+}
+
+unittest
+{
+  int[] population = [1,0];
+  int[] expected = [0,1];
+  assert(quicksort(population) == expected);
+}
+
+unittest
+{
+  int[] population = [0,1,2];
+  int[] expected = [0,1,2];
+  assert(quicksort(population) == expected);
+}
+
+unittest
+{
+  int[] population = [0,2,1];
+  int[] expected = [0,1,2];
+  assert(quicksort(population) == expected);
+}
+
+unittest
+{
+  int[] population = [1,2,0];
+  int[] expected = [0,1,2];
+  assert(quicksort(population) == expected);
+}
+
+unittest
+{
+  int[] population = [1,0,2];
+  int[] expected = [0,1,2];
+  assert(quicksort(population) == expected);
+}
+
+unittest
+{
+  int[] population = [2,1,0];
+  int[] expected = [0,1,2];
+  assert(quicksort(population) == expected);
 }
 
 
@@ -103,11 +169,11 @@ int main()
   //population = splitter(din.readLine().strip(' ')).map!(to!int).array;
   numberOfEntries = 7;
   //population = splitter("5 8 1 3 7 9 2".strip(' ')).map!(to!int).array;
-  population = splitter("2 1 7".strip(' ')).map!(to!int).array;
+  population = splitter("5 8 9 7 10 2".strip(' ')).map!(to!int).array;
 
-  int[] sorted = quicksort(population);
-
-  print(population);
+  writeln(population);
+  quicksort(population);
+  writeln(population);
 
   return 0;
 }
