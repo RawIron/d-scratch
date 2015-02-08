@@ -8,7 +8,7 @@ import std.array;
 int[] emptyArray;
 
 
-enum ptree = true;
+enum ptree = false;
 
 struct Print {
   enum tabSize = 2;
@@ -41,11 +41,9 @@ void swap(int[] that, int i, int j)
 
 int[] quicksort(int[] that)
 {
-  int[] inplace(int[] that, int left, int p, int right, Print d)
+  int sortPartition(int[] that, int left, int p, int right)
   {
-    writefln("%s called %d %d %d", d.ident, left, p, right);
-
-    if (left > right) return that;
+    if (left > right) return -1;
 
     int cutHere = 0;
     int i = left;
@@ -72,27 +70,53 @@ int[] quicksort(int[] that)
     if (cutHere < that[left..right+1].length) {
       swap(that, left + cutHere, right+1);
     }
+
+    return cutHere;
+  }
+
+  int[] inplacePrint(int[] that, int left, int p, int right, Print d)
+  {
+    writefln("%s called %d %d %d", d.ident, left, p, right);
+
+    int cutHere = sortPartition(that, left, p, right);
+    d.dive();
     writef("%s root ", d.ident);
     writefln("%s", that);
 
-    d.dive();
-    inplace(that, left, left + cutHere-1, left + cutHere-2, d);
-    writef("%s left ", d.ident);
-    writefln("%s", that);
+    if (cutHere >= 0) {
+      inplacePrint(that, left, left + cutHere-1, left + cutHere-2, d);
+      writef("%s left ", d.ident);
+      writefln("%s", that);
 
-    inplace(that, left + cutHere+1, right+1, right, d);
-    writef("%s right ", d.ident);
-    writefln("%s", that);
+      inplacePrint(that, left + cutHere+1, right+1, right, d);
+      writef("%s right ", d.ident);
+      writefln("%s", that);
+    }
+
+    return that;
+  }
+
+  int[] inplace(int[] that, int left, int p, int right)
+  {
+    int cutHere = sortPartition(that, left, p, right);
+
+    if (cutHere >= 0) {
+      inplace(that, left, left + cutHere-1, left + cutHere-2);
+      inplace(that, left + cutHere+1, right+1, right);
+    }
 
     return that;
   }
 
   static if (ptree) {
     Print d;
+    if (that.length <= 1) return that;
+    else return inplacePrint(that, 0, to!int(that.length-1), to!int(that.length-2), d);
   }
-
-  if (that.length <= 1) return that;
-  else return inplace(that, 0, to!int(that.length-1), to!int(that.length-2), d);
+  else {
+    if (that.length <= 1) return that;
+    else return inplace(that, 0, to!int(that.length-1), to!int(that.length-2));
+  }
 }
 
 
@@ -167,9 +191,9 @@ int main()
 
   //numberOfEntries = to!int(din.readLine());
   //population = splitter(din.readLine().strip(' ')).map!(to!int).array;
-  numberOfEntries = 7;
-  //population = splitter("5 8 1 3 7 9 2".strip(' ')).map!(to!int).array;
-  population = splitter("5 8 9 7 10 2".strip(' ')).map!(to!int).array;
+
+  population = splitter("5 8 1 3 7 9 2".strip(' ')).map!(to!int).array;
+  //population = splitter("5 8 9 7 10 2".strip(' ')).map!(to!int).array;
 
   writeln(population);
   quicksort(population);
