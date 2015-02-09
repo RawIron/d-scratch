@@ -5,24 +5,24 @@ import std.stdio, std.cstream, std.algorithm;
 import std.array;
 
 
-void print(in int[int] that)
+void print(in int[] that)
 {
-  foreach (key, value; that) {
-    write(to!string(key), ":", to!string(value), " ");
+  foreach (value; that) {
+    write(to!string(value), " ");
   }
   writeln;
 }
 
 
-int[int] count(in int[] that)
+int[] count(in int[] that)
 {
-  int[int] counts;
+  int[100] counts = 0;
 
   foreach (entry; that) {
     counts[entry] += 1;
   }
 
-  return counts;
+  return counts.array;
 }
 
 
@@ -36,7 +36,7 @@ int main()
 
   population = splitter("3 5 3 2 8".strip(' ')).map!(to!int).array;
 
-  int[int] counts = count(population);
+  int[] counts = count(population);
 
   print(counts);
 
