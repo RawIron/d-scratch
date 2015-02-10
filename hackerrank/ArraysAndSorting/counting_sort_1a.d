@@ -13,6 +13,30 @@ void print(in int[] that)
   writeln;
 }
 
+void printSorted(in int[] that)
+{
+  int i = 0;
+  while (i < that.length) {
+    int j = 0;
+    while (j < that[i]) {
+      write(to!string(i), " ");
+      ++j;
+    }
+    ++i;
+  }
+  writeln;
+}
+
+void printTotal(in int[] that)
+{
+  int total = 0;
+  foreach (value; that) {
+    total += value;
+    write(to!string(total), " ");
+  }
+  writeln;
+}
+
 
 int[] count(in int[] that)
 {
@@ -28,17 +52,21 @@ int[] count(in int[] that)
 
 int main()
 {
-  int numberOfEntries = 0;
+  int numberOfEntries = 1;
   int[] population = new int[numberOfEntries];
 
   //numberOfEntries = to!int(din.readLine());
-  //population = splitter(din.readLine().strip(' ')).map!(to!int).array;
+  foreach (i; 0..numberOfEntries) {
+  population[i] = splitter("3 5".strip(' ')).array[0].to!int;
+    //population[i] = splitter(din.readLine().strip(' ')).array[0].to!int;
+  }
 
-  population = splitter("3 5 3 2 8".strip(' ')).map!(to!int).array;
+  //population = splitter(din.readLine().strip(' ')).map!(to!int).array;
+  //population = splitter("3 5 3 2 8".strip(' ')).map!(to!int).array;
 
   int[] counts = count(population);
 
-  print(counts);
+  printTotal(counts);
 
   return 0;
 }
