@@ -5,10 +5,10 @@ import std.stdio, std.cstream, std.algorithm;
 import std.array;
 
 
-void print(in int[] that)
+void print(in interval[] that)
 {
   foreach (value; that) {
-    write(to!string(value), " ");
+    write(to!string(value.a), " ", to!string(value.b), " ");
   }
   writeln;
 }
@@ -16,13 +16,13 @@ void print(in int[] that)
 
 struct interval { int a; int b; };
 
-interval[] closest(in int[] that)
+interval[] closest(int[] that)
 {
   interval pair;
   interval[] pairs;
   int minDistance = int.max;
 
-  int[] sorted = sort(that.dup).array;
+  auto sorted = sort(that);
 
   foreach (i; 1..sorted.length) {
     int distance = sorted[i] - sorted[i-1]; 
@@ -51,7 +51,7 @@ int main()
 
   interval[] solution = closest(population);
 
-  writeln(solution);
+  print(solution);
 
   return 0;
 }
