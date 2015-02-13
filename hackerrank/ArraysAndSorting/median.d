@@ -18,16 +18,20 @@ int median(in int[] that)
     int[] right;
 
     foreach (entry; partition[1..$]) {
-      if (entry <= p)
+      if (entry < p)
         left ~= entry;
       else
         right ~= entry;
     }
     left ~= p;
 
+    // all remaining entries have value p
+    if (left.length + right.length == 1) return p;
+
+    // pivot is at median
     if (left.length-1 == indexOfMedian) return p;
 
-    else if (left.length-1 < indexOfMedian)
+    if (left.length-1 < indexOfMedian)
       return part(right, indexOfMedian - left.length);
 
     else
