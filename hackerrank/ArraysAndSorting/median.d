@@ -23,10 +23,11 @@ int median(in int[] that)
       else
         right ~= entry;
     }
+    left ~= p;
 
-    if (left.length == indexOfMedian) return p;
+    if (left.length-1 == indexOfMedian) return p;
 
-    else if (left.length < indexOfMedian)
+    else if (left.length-1 < indexOfMedian)
       return part(right, indexOfMedian - left.length);
 
     else
@@ -37,14 +38,40 @@ int median(in int[] that)
 }
 
 
+unittest
+{
+  int[] numbers = [1, 2, 5, 6, 4];
+  assert(median(numbers) == 4);
+}
+
+unittest
+{
+  int[] numbers = [2, 10, 7, 1, 8, 9, 3];
+  assert(median(numbers) == 7);
+}
+
+unittest
+{
+  int[] numbers = [2, 10, 7];
+  assert(median(numbers) == 7);
+}
+
+unittest
+{
+  int[] numbers = [7, 10, 2];
+  assert(median(numbers) == 7);
+}
+
+
 int main()
 {
   int numberOfEntries = 0;
   //numberOfEntries = to!int(din.readLine());
-  int[] population = new int[numberOfEntries];
+  //int[] population = new int[numberOfEntries];
 
   //population = splitter(din.readLine().strip(' ')).map!(to!int).array;
-  population = splitter("5 8 1 3 7 9 2".strip(' ')).map!(to!int).array;
+  //population = splitter("5 8 1 3 7 9 2".strip(' ')).map!(to!int).array;
+  int[] population = [1, 2, 5, 6, 4];
 
   int solution = median(population);
 
