@@ -5,13 +5,17 @@ import std.stdio, std.cstream, std.algorithm;
 import std.array;
 
 
-int pairs(in int[] that) pure
+long pairs(in int[] that) pure
 {
-  int twoCombinations(in int r) {
+  long twoCombinations(in long r) {
     return r * (r-1);
   }
 
-  int pairs = 0;
+  if (that.length < 2) {
+    return 0L;
+  }
+
+  long pairs = 0;
   int[int] counts;
 
   foreach (i; 0..that.length) {
@@ -20,7 +24,7 @@ int pairs(in int[] that) pure
 
   foreach (key, value; counts) {
     if (value > 1) {
-      pairs += twoCombinations(value);
+      pairs += twoCombinations(to!long(value));
     }
   }
 
@@ -30,16 +34,20 @@ int pairs(in int[] that) pure
 
 int main()
 {
-  int numberOfEntries = 1;
-  //numberOfEntries = to!int(din.readLine());
+  //int numberOfEntries = 1;
+  int numberOfTests = to!int(din.readLine()); 
 
-  int[] population;
-  //population = splitter(din.readLine().strip(' ')).map!(to!int).array;
-  population = splitter("3 5 3 2 8 3".strip(' ')).map!(to!int).array;
+  foreach (test; 0..numberOfTests) {
+    int numberOfEntries = to!int(din.readLine());
 
-  int solution = pairs(population);
+    int[] population;
+    population = splitter(din.readLine().strip(' ')).map!(to!int).array;
+    //population = splitter("3 5 1 3 2 1 8 3".strip(' ')).map!(to!int).array;
 
-  writeln(solution);
+    long solution = pairs(population);
+
+    writeln(solution);
+  }
 
   return 0;
 }
