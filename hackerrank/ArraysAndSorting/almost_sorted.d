@@ -26,6 +26,7 @@ int isAlmostSorted(in int[] that) {
     }
     else if (nextElevation != currentElevation) {
       ++changeOfElevation;
+      currentElevation = nextElevation;
       streak = 0;
     }
   }
@@ -51,8 +52,8 @@ int main() {
   //int numberOfEntries = to!int(din.readLine());
 
   //int[] population = splitter(din.readLine().strip(' ')).map!(to!int).array;
-  //int[] population = splitter("3 5 2 8".strip(' ')).map!(to!int).array;
-  int[] population = splitter("8 4 10 2 1 6 7 12".strip(' ')).map!(to!int).array;
+  int[] population = splitter("3 5 2 8".strip(' ')).map!(to!int).array;
+  //int[] population = splitter("8 4 10 2 1 6 7 12".strip(' ')).map!(to!int).array;
 
   int solution = isAlmostSorted(population);
 
