@@ -35,14 +35,12 @@ unittest
 
 int main() {
   int numberOfTests = 1;
-  int numberOfEntries = 0;
   int shifts = 0;
 
   foreach (test; 0..numberOfTests) {
-    //numberOfEntries = to!int(din.readLine());
+    //int numberOfEntries = to!int(din.readLine());
     int[] population = new int[numberOfEntries];
     //population = splitter(din.readLine().strip(' ')).map!(to!int).array;
-    numberOfEntries = 4;
     //population = splitter("3 5 2 8".strip(' ')).map!(to!int).array;
     population = splitter("8 4 10 2 1 6 7 12".strip(' ')).map!(to!int).array;
 

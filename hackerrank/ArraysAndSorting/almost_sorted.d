@@ -3,35 +3,90 @@
 import std.conv : to;
 import std.stdio, std.cstream, std.algorithm;
 import std.array;
+import std.random : uniform;
 
 
-int isAlmostSorted(in int[] that) {
-  enum Elevation: int {up, down, flat};
-  Elevation currentElevation = Elevation.flat;
-  Elevation nextElevation = Elevation.flat;
-  int changeOfElevation = 0;
-  int streak = 0;
+bool isAscending(in int[] that) pure
+{
+  if (countSlopeChanges(that) == 0) return true;
+  else return false;
+}
 
-  Elevation elevationOf(const int first, const int second) pure
-  {
-    if (first < second) return Elevation.up;
-    else if (first == second) return Elevation.flat;
-    else return Elevation.down;
+int[] takeSampleOf(in int[] that)
+{
+  long sampleSize = that.length / 8;
+  int[] sample = new int[sampleSize];
+
+  foreach (i; 0..sampleSize) {
+    sample[i] = that[uniform(0, that.length)];
   }
 
-  foreach (i; 2..that.length) {
-    nextElevation = elevationOf(that[i-1], that[i]);
-    if (nextElevation == Elevation.flat || nextElevation == currentElevation) {
+  return sample;
+}
+
+
+enum Slope: int {up, down, flat, border};
+
+Slope slopeOf(const int first, const int second) pure
+{
+  if (first < second) return Slope.up;
+  else if (first == second) return Slope.flat;
+  else return Slope.down;
+}
+
+int countSlopePattern(in int[] that, in Slope[] pattern)
+{
+  Slope nextSlope = Slope.border;
+  Slope[] match = new Slope[pattern.length];
+  int patternCount = 0;
+
+  fill(match, Slope.border);
+  foreach (i; 1..that.length) {
+    nextSlope = slopeOf(that[i-1], that[i]);
+    match.popFront;
+    match ~= nextSlope;
+    writeln(match);
+    if (match == pattern) ++patternCount;
+  }
+
+  return patternCount;
+}
+
+
+int countSlopeChanges(in int[] that) pure
+{
+  Slope currentSlope = Slope.border;
+  Slope nextSlope = Slope.flat;
+  int changeOfSlope = 0;
+  int streak = 0;
+
+  foreach (i; 1..that.length) {
+    nextSlope = slopeOf(that[i-1], that[i]);
+    if (nextSlope == Slope.flat || nextSlope == currentSlope) {
       ++streak;
     }
-    else if (nextElevation != currentElevation) {
-      ++changeOfElevation;
-      currentElevation = nextElevation;
+    else if (nextSlope != currentSlope) {
+      ++changeOfSlope;
+      currentSlope = nextSlope;
       streak = 0;
     }
   }
 
-  return changeOfElevation;
+  return changeOfSlope;
+}
+
+
+enum SortOrder: int {ascending, descending};
+
+bool oneSwapToSorted(in int[] that, SortOrder order)
+{
+
+  return false;
+}
+
+int isAlmostSorted(in int[] that)
+{
+  return 0;
 }
 
 
@@ -52,10 +107,10 @@ int main() {
   //int numberOfEntries = to!int(din.readLine());
 
   //int[] population = splitter(din.readLine().strip(' ')).map!(to!int).array;
-  int[] population = splitter("3 5 2 8".strip(' ')).map!(to!int).array;
-  //int[] population = splitter("8 4 10 2 1 6 7 12".strip(' ')).map!(to!int).array;
+  //int[] population = splitter("3 5 2 8".strip(' ')).map!(to!int).array;
+  int[] population = splitter("8 4 10 2 1 6 7 12".strip(' ')).map!(to!int).array;
 
-  int solution = isAlmostSorted(population);
+  int solution = countSlopePattern(population, [Slope.up, Slope.up]);
 
   writeln(solution);
 
