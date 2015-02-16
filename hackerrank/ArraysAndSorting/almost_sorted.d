@@ -25,7 +25,7 @@ int[] takeSampleOf(in int[] that)
 }
 
 
-enum Slope: int {up, down, flat, border};
+enum Slope: int {up, down, flat, border, skip};
 
 Slope slopeOf(const int first, const int second) pure
 {
@@ -34,19 +34,39 @@ Slope slopeOf(const int first, const int second) pure
   else return Slope.down;
 }
 
-int countSlopePattern(in int[] that, in Slope[] pattern)
+
+int[] countSlopePattern(in int[] that, in Slope[][] pattern)
 {
-  Slope nextSlope = Slope.border;
-  Slope[] match = new Slope[pattern.length];
-  int patternCount = 0;
+  Slope currentSlope = Slope.flat;
+  Slope previousSlope = Slope.flat;
+  Slope[] match = new Slope[pattern[0].length];
+  int[] patternCount = new int[pattern.length];
+
+  void isNewMatchWith(const Slope s)
+  {
+    match.popFront;
+    match ~= currentSlope;
+    foreach (j; 0..pattern.length)
+      if (match == pattern[j]) ++patternCount[j];
+  }
+
+  Slope decideOnSlopeUseFlatContinues(const Slope s)
+  {
+    if (s == Slope.flat) return previousSlope;
+    else return s;
+  }
+
+  Slope decideOnSlopeUseFlatSkips(const Slope s)
+  {
+    if (s == Slope.flat) return Slope.skip;
+    else return s;
+  }
 
   fill(match, Slope.border);
   foreach (i; 1..that.length) {
-    nextSlope = slopeOf(that[i-1], that[i]);
-    match.popFront;
-    match ~= nextSlope;
-    writeln(match);
-    if (match == pattern) ++patternCount;
+    currentSlope = decideOnSlopeUseFlatSkips(slopeOf(that[i-1], that[i]));
+    if (currentSlope != Slope.skip)
+      isNewMatchWith(currentSlope);
   }
 
   return patternCount;
@@ -103,14 +123,17 @@ unittest
 }
 
 
+const swapAsc = [[Slope.up, Slope.down, Slope.up]];
+const swapDesc = [[Slope.down, Slope.up, Slope.down]];
+
 int main() {
   //int numberOfEntries = to!int(din.readLine());
 
   //int[] population = splitter(din.readLine().strip(' ')).map!(to!int).array;
   //int[] population = splitter("3 5 2 8".strip(' ')).map!(to!int).array;
-  int[] population = splitter("8 4 10 2 1 6 7 12".strip(' ')).map!(to!int).array;
+  int[] population = splitter("8 4 10 2 2 6 7 12".strip(' ')).map!(to!int).array;
 
-  int solution = countSlopePattern(population, [Slope.up, Slope.up]);
+  int[] solution = countSlopePattern(population, swapAsc);
 
   writeln(solution);
 
