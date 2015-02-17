@@ -39,15 +39,21 @@ int[] countSlopePattern(in int[] that, in Slope[][] pattern)
 {
   Slope currentSlope = Slope.flat;
   Slope previousSlope = Slope.flat;
-  Slope[] match = new Slope[pattern[0].length];
+  Slope[][] match = new Slope[][pattern.length];
   int[] patternCount = new int[pattern.length];
+
+  foreach (i; 0..pattern.length) {
+    match[i] = new Slope[pattern[i].length];
+    fill(match[i], Slope.border);
+  }
 
   void isNewMatchWith(const Slope s)
   {
-    match.popFront;
-    match ~= currentSlope;
-    foreach (j; 0..pattern.length)
-      if (match == pattern[j]) ++patternCount[j];
+    foreach (j; 0..pattern.length) {
+      match[j].popFront;
+      match[j] ~= currentSlope;
+      if (match[j] == pattern[j]) ++patternCount[j];
+    }
   }
 
   Slope decideOnSlopeUseFlatContinues(const Slope s)
@@ -62,7 +68,6 @@ int[] countSlopePattern(in int[] that, in Slope[][] pattern)
     else return s;
   }
 
-  fill(match, Slope.border);
   foreach (i; 1..that.length) {
     currentSlope = decideOnSlopeUseFlatSkips(slopeOf(that[i-1], that[i]));
     if (currentSlope != Slope.skip)
@@ -123,8 +128,8 @@ unittest
 }
 
 
-const swapAsc = [[Slope.up, Slope.down, Slope.up]];
-const swapDesc = [[Slope.down, Slope.up, Slope.down]];
+const swapAsc = [Slope.up, Slope.down, Slope.up];
+const swapDesc = [Slope.down, Slope.up, Slope.down];
 
 int main() {
   //int numberOfEntries = to!int(din.readLine());
@@ -133,7 +138,7 @@ int main() {
   //int[] population = splitter("3 5 2 8".strip(' ')).map!(to!int).array;
   int[] population = splitter("8 4 10 2 2 6 7 12".strip(' ')).map!(to!int).array;
 
-  int[] solution = countSlopePattern(population, swapAsc);
+  int[] solution = countSlopePattern(population, [swapAsc, swapDesc]);
 
   writeln(solution);
 
