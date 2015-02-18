@@ -35,7 +35,7 @@ Slope slopeOf(const int first, const int second) pure
 }
 
 
-int[] countSlopePattern(in int[] that, in Slope[][] pattern)
+int[] countSlopePattern(in int[] that, in Slope[][] pattern) pure
 {
   Slope currentSlope = Slope.flat;
   Slope previousSlope = Slope.flat;
@@ -78,12 +78,19 @@ int[] countSlopePattern(in int[] that, in Slope[][] pattern)
 }
 
 
-int countSlopeChanges(in int[] that) pure
+int measureLongestStreak(in int[] that)
 {
   Slope currentSlope = Slope.border;
   Slope nextSlope = Slope.flat;
-  int changeOfSlope = 0;
   int streak = 0;
+  int maxStreak = 0;
+
+  void newMaxStreak()
+  {
+    if (streak > maxStreak)
+      maxStreak = streak;
+    streak = 0;
+  }
 
   foreach (i; 1..that.length) {
     nextSlope = slopeOf(that[i-1], that[i]);
@@ -91,9 +98,27 @@ int countSlopeChanges(in int[] that) pure
       ++streak;
     }
     else if (nextSlope != currentSlope) {
+      currentSlope = nextSlope;
+      newMaxStreak();
+    }
+  }
+  newMaxStreak();
+
+  return streak;
+}
+
+
+int countSlopeChanges(in int[] that) pure
+{
+  Slope currentSlope = Slope.border;
+  Slope nextSlope = Slope.flat;
+  int changeOfSlope = 0;
+
+  foreach (i; 1..that.length) {
+    nextSlope = slopeOf(that[i-1], that[i]);
+    if (nextSlope != currentSlope) {
       ++changeOfSlope;
       currentSlope = nextSlope;
-      streak = 0;
     }
   }
 
@@ -105,7 +130,6 @@ enum SortOrder: int {ascending, descending};
 
 bool oneSwapToSorted(in int[] that, SortOrder order)
 {
-
   return false;
 }
 
