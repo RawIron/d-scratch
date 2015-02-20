@@ -73,6 +73,7 @@ int[] countSlopePattern(in int[] that, in Slope[][] pattern) pure
     if (currentSlope != Slope.skip)
       isNewMatchWith(currentSlope);
   }
+  isNewMatchWith(Slope.border);
 
   return patternCount;
 }
@@ -128,9 +129,23 @@ int countSlopeChanges(in int[] that) pure
 
 enum SortOrder: int {ascending, descending};
 
-bool oneSwapToSorted(in int[] that, SortOrder order)
+enum swapAscInner = [Slope.up, Slope.down, Slope.up];
+enum swapAscLeftBorder = [Slope.border, Slope.down, Slope.up];
+enum swapAscRightBorder = [Slope.up, Slope.down, Slope.border];
+
+enum swapDesc = [Slope.down, Slope.up, Slope.down];
+
+bool oneSwapToSorted(in int[] that, SortOrder order = SortOrder.ascending)
 {
-  return false;
+  Slope[][] patterns;
+
+  if (order == SortOrder.ascending) patterns = [swapAscInner, swapAscLeftBorder, swapAscRightBorder];
+  else patterns = [swapDesc];
+
+  int[] solution = countSlopePattern(that, patterns);
+writeln(that, solution);
+  if (solution.sum == 2) return true;
+  else return false;
 }
 
 int isAlmostSorted(in int[] that)
@@ -142,18 +157,52 @@ int isAlmostSorted(in int[] that)
 unittest
 {
   int[] that = [3, 5, 2, 8];
-  assert(isAlmostSorted(that) == 2);
+  assert(oneSwapToSorted(that) == false);
+  assert(isAlmostSorted(that) == 0);
+}
+
+unittest
+{
+  int[] that = [7, 3, 5, 2, 8];
+  assert(oneSwapToSorted(that) == true);
+  assert(isAlmostSorted(that) == 0);
+}
+
+unittest
+{
+  int[] that = [1, 8, 5, 6, 3];
+  assert(oneSwapToSorted(that) == false);
+  assert(isAlmostSorted(that) == 0);
+}
+
+unittest
+{
+  int[] that = [3, 7, 5, 6, 4, 8];
+  assert(oneSwapToSorted(that) == true);
+  assert(isAlmostSorted(that) == 0);
+}
+
+unittest
+{
+  int[] that = [3, 6, 5, 4, 8];
+  assert(oneSwapToSorted(that) == false);
+  assert(isAlmostSorted(that) == 0);
 }
 
 unittest
 {
   int[] that = [8, 4, 10, 2, 1, 6, 7, 12];
-  assert(isAlmostSorted(that) == 12);
+  assert(oneSwapToSorted(that) == false);
+  assert(isAlmostSorted(that) == 0);
 }
 
+unittest
+{
+  int[] that = [4, 3, 2, 1, 6, 7];
+  assert(oneSwapToSorted(that) == false);
+  assert(isAlmostSorted(that) == 0);
+}
 
-const swapAsc = [Slope.up, Slope.down, Slope.up];
-const swapDesc = [Slope.down, Slope.up, Slope.down];
 
 int main() {
   //int numberOfEntries = to!int(din.readLine());
@@ -162,7 +211,7 @@ int main() {
   //int[] population = splitter("3 5 2 8".strip(' ')).map!(to!int).array;
   int[] population = splitter("8 4 10 2 2 6 7 12".strip(' ')).map!(to!int).array;
 
-  int[] solution = countSlopePattern(population, [swapAsc, swapDesc]);
+  int[] solution = countSlopePattern(population, [swapAscInner, swapDesc]);
 
   writeln(solution);
 
